@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class Fingerprint{
     private ArrayList <Integer> hashes;
     private int gramSize; //length of n-gram (variables)
@@ -50,7 +54,7 @@ public class Fingerprint{
         return answer;
     }
 
-    public void makeFingerprint(){
+    public void makeFingerprint() throws IOException {
         prints.clear();
         new FileReader f = new FileReader(text);
         //clear the HashSet to make a new set of prints
