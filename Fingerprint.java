@@ -1,44 +1,35 @@
 import java.util.ArrayList;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class Fingerprint{
-    private ArrayList <Integer> hashes;
+    private ArrayList hashes; //Arraylist of hashes (gotten from Hash.java)
     private int gramSize; //length of n-gram (variables)
-    private int numGrams; //number of n-grams used for fingerprint (we could do a percent and randomly pick n-grams)
-    private Set<String> prints;
+    private int windowSize; //Size of the window we're using to winnow
+    private ArrayList<Integer> prints; //Eventual fingerprint of the document
 
-    public Fingerprint(ArrayList<Integer> h, int sz, int grams){
+    public Fingerprint(ArrayList<Integer> h, int sz, int window){
         hashes = h;
         gramSize = sz;
-        numGrams = grams;
+        windowSize = window;
+        prints = makeFingerprint(hashes);
     }
 
-    public void setFile(File doc){
-        text = doc;
-    }
-
-    public int getN(){
+    public int getGramSize(){
         return gramSize;
     }
 
-    public void setN(int newN){
-        n = newN > 0 ? newN : n;
+    public void setGramSize(int newSize){
+        gramSize = newSize > 0 ? newSize : gramSize;
     }
 
-    public int setNumGrams(int newNum){
-        numGrams = newNum;
-    }
-
-    public void getNumGrams(){
-        return numGrams;
+    public int setWindowSize(int newWindow){
+        windowSize = newWindow;
     }
 
     public HashSet<String> getPrints{
         return prints;
     }
 
-    public void addPrint(String print){
+    private static void addPrint(String print){
         prints.add(print);
     }
 
@@ -46,7 +37,7 @@ public class Fingerprint{
         return prints.contains(print);
     }
 
-    public String toString(){
+    public String printsToString(){
         String answer = new String("");
         for(String print : prints){
             answer = answer + print;
@@ -54,18 +45,17 @@ public class Fingerprint{
         return answer;
     }
 
-    public void makeFingerprint() throws IOException {
+    private static ArrayList<Integer> makeFingerprint(ArrayList<Integer> hashes){
         prints.clear();
-        new FileReader f = new FileReader(text);
-        //clear the HashSet to make a new set of prints
+        //clear the ArrayList to make a new set of prints
         //add code here to create the document's fingerprint
-        f.close();
+        //use winnowing method
     }
 
     public double compareFingerprints(Fingerprint doc2){
         HashSet<String> prints2 = doc2.getPrints;
         //add code here to compare two documents' fingerprints (HashSets)
         //should return the percent of fingerprints that match
-        return 0; //change this
+        return 0; 
     }
 }

@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class Hash{
-    private ArrayList<String> words;
-    private ArrayList<Integer> wordsHash;
+    private ArrayList<String> words; //this should be the parsed document
+    private ArrayList<Integer> wordsHash; //this is words after it's been hashed
 
     Hash(){
         words = new ArrayList<String>();
@@ -57,12 +57,12 @@ public class Hash{
         return answer;
     }
 
-    private Integer hash(String word){
+    private static Integer hash(String word){
         //add hashing algorithm here
         return 0;
     }
 
-    private void hash(ArrayList<String> list){
+    private static void hash(ArrayList<String> list){
         for(int i = 0; i < words.size(); i++){
             wordsHash.set(i, hash(list.get(i)));
         }
