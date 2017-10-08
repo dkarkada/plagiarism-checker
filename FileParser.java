@@ -32,7 +32,8 @@ public class FileParser{
         String withoutQuotes = s.replace("'","");//goes through string and deletes apostrophes
         withoutQuotes = s.replace("\"", "");//goes through string and deletes quotation marks
         withoutQuotes = s.replace("-","");//goes through string and deletes hyphens
-        return withoutQuotes;
+        return withoutQuotes; //there's probably a better way to do this with regex but I couldn't find an answer
+        //that made sense to me on the internet
     }
 
     private ArrayList<String> parse(String s){
@@ -40,7 +41,9 @@ public class FileParser{
         String[] parsedLine;
         ArrayList<String> answer = new ArrayList<String>();
         parsedLine = line.split("\\P{L}+");//splits string whenever it hits something that isn't a letter
-        //write a parsing method
+        for(int i = 0; i < parsedLine.length(); i++){
+            answer.set(i,parsedLine[i]);
+        }
         return answer;
     }
 }
