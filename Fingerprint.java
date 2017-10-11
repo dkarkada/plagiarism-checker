@@ -33,7 +33,7 @@ public class Fingerprint{
         prints.add(print);
     }
 
-    public boolean hasPrint(String print){
+    public boolean contains(String print){
         return prints.contains(print);
     }
 
@@ -53,9 +53,18 @@ public class Fingerprint{
     }
 
     public double compareFingerprints(Fingerprint doc2){
-        HashSet<String> prints2 = doc2.getPrints;
+        HashSet<String> prints2 = doc2.getPrints();
+        int sharedHashes = 0;
+        if(hashes.size() <= doc2.getPrints().size())){
+            for(int i = 0; i < hashes.size(); i++){
+                if(doc2.getPrints().contains(hashes.get(i)))
+                    sharedHashes++;
+            }
+        }
         //add code here to compare two documents' fingerprints (HashSets)
         //should return the percent of fingerprints that match
-        return 0; 
+        //probably need to change this because we want to create a hash that
+        //encodes both highly similar words and exact word matches
+        return 0;
     }
 }

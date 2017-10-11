@@ -63,7 +63,7 @@ public class Hash{
     }
 
     private static void hash(ArrayList<String> list){
-        for(int i = 0; i < words.size(); i++){
+        for(int i = 0; i < words.size() ; i++){
             wordsHash.set(i, hash(list.get(i)));
         }
     }

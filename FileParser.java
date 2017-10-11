@@ -32,8 +32,9 @@ public class FileParser{
         String withoutQuotes = s.replace("'","");//goes through string and deletes apostrophes
         withoutQuotes = s.replace("\"", "");//goes through string and deletes quotation marks
         withoutQuotes = s.replace("-","");//goes through string and deletes hyphens
-        return withoutQuotes; //there's probably a better way to do this with regex but I couldn't find an answer
-        //that made sense to me on the internet
+        return withoutQuotes; //there's probably a better way to do this with regex but I couldn't find
+        //an answer that made sense to me on the internet
+        //is this all the punctuation we want to delete?
     }
 
     private ArrayList<String> parse(String s){
