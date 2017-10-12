@@ -63,15 +63,18 @@ public class Fingerprint{
     }
     
     private void makeHashes(ArrayList<String> words) {
+    	int threshold = 3;
     	for (String word : words) {
-    		char[] chars = word.toLowerCase().toCharArray();
-    		int hash = 0;
-    		for (char c : chars) {
-    			hash <<= 6;
-    			hash |= c - 96;
-    			hash %= 100000;
+    		if (word.length() > threshold) {
+	    		char[] chars = word.toLowerCase().toCharArray();
+	    		int hash = 0;
+	    		for (char c : chars) {
+	    			hash <<= 6;
+	    			hash |= c - 96;
+	    			hash %= 100000;
+	    		}
+	    		hashes.add(hash);
     		}
-    		hashes.add(hash);
     	}
     }
 
