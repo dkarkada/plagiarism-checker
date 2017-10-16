@@ -10,7 +10,7 @@ public class Fingerprint{
     private ArrayList<Hash> hashes; //Arraylist of hashes (gotten from Hash.java)
     private int gramSize; //length of n-gram (variables)
     private int guarantee; // match of length >= guarantee is guaranteed to be detected
-    private ArrayList<Integer> fingerprint; //Eventual fingerprint of the document
+    private ArrayList<Hash> fingerprint; //Eventual fingerprint of the document
 
     public Fingerprint(String filepath, int ksize, int guaranteeThreshold){
         gramSize = ksize;
@@ -20,17 +20,34 @@ public class Fingerprint{
     	if (gramSize <= 0)
     		throw new IllegalArgumentException("parameters must be positive.");
         hashes = new ArrayList<Hash>();
-        fingerprint = new ArrayList<Integer>();
+        fingerprint = new ArrayList<Hash>();
         makeHashes(parseFile(filepath));
         makeFingerprint();
     }
-
     public int getGramSize(){
         return gramSize;
     }
-
-    public ArrayList<Integer> getPrint(){
+    public ArrayList<Hash> getPrint(){
         return fingerprint;
+    }
+    public int size() {
+    	return fingerprint.size();
+    }
+    public boolean hasHash(int hash){
+        return fingerprint.contains(hash);
+    }
+    public String toString(){
+    	return fingerprint.toString();
+    }
+    public double compare(Fingerprint other){
+        //add code here to compare two documents' fingerprints (HashSets)
+        //should return the percent of fingerprints that match
+    	double pctMatch = 0;
+    	for (Hash h : this.fingerprint)
+    		if (other.fingerprint.contains(h))
+    			pctMatch++;
+    	pctMatch /= this.size();
+        return pctMatch; 
     }
     
     private static ArrayList<String> parseFile(String filepath){
@@ -57,7 +74,6 @@ public class Fingerprint{
         }
         return parsedText;
     }
-    
     private void makeHashes(ArrayList<String> words) {
     	int threshold = 3;
     	for (int i=words.size()-1; i>=0; i--) {
@@ -79,30 +95,32 @@ public class Fingerprint{
     		hashes.add(new Hash(hash, i));
     	}
     }
-
-    public boolean hasHash(int hash){
-        return fingerprint.contains(hash);
-    }
-
-    public String toString(){
-    	return fingerprint.toString();
-    }
-
     private void makeFingerprint(){ 
         //clear the ArrayList to make a new set of prints
         //add code here to create the document's fingerprint
         //use winnowing method
-    	int window = gramSize - guarantee + 1;
-    	int index = 0;
-    	
+    	int window = guarantee - gramSize + 1;
+    	int minIndex = -1;
+    	for (int i=0; i < hashes.size() - window + 1; i++) {
+    		if (minIndex >= i) {
+    			if (hashes.get(i+window-1).getHash() < hashes.get(minIndex).getHash()) {
+    				minIndex = i+window-1;
+    				fingerprint.add(hashes.get(i+window-1));
+    			}
+    		}
+    		else {
+    			Hash min = null;
+	    		for (int ind = 0; ind < window; ind++) {
+	    			if (min==null || hashes.get(ind+i).getHash() < min.getHash()) {
+	    				min = hashes.get(ind+i);
+	    				minIndex = ind + i;
+	    			}
+	    		}
+	    		fingerprint.add(min);
+    		}
+    	}
     }
-
-    public double compareFingerprints(Fingerprint f2){
-    	ArrayList<Integer> f2p = f2.fingerprint;
-        //add code here to compare two documents' fingerprints (HashSets)
-        //should return the percent of fingerprints that match
-        return 0; 
-    }
+    
 }
 
 class Hash{
@@ -122,5 +140,13 @@ class Hash{
 	@Override
 	public String toString() {
 		return Integer.toString(hash);
+	}
+	@Override
+	public boolean equals(Object other) {
+		return other instanceof Hash && ((Hash)other).hash == this.hash;
+	}
+	@Override
+	public int hashCode() {
+		return hash;
 	}
 }
