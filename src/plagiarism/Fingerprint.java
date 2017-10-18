@@ -7,11 +7,17 @@ import java.io.IOException;
 import java.util.*;
 
 public class Fingerprint{
-    private ArrayList<Hash> hashes; //Arraylist of hashes (gotten from Hash.java)
-    private int gramSize; //length of n-gram (variables)
-    private int guarantee; // match of length >= guarantee is guaranteed to be detected
-    private ArrayList<Hash> fingerprint; //Eventual fingerprint of the document
+    private ArrayList<Hash> hashes;
+    private int gramSize;
+    private int guarantee;
+    private ArrayList<Hash> fingerprint;
 
+    /**
+     * 
+     * @param filepath				Path to the document
+     * @param ksize					Size of k-gram (noise threshold; matches below ksize will not be found)
+     * @param guaranteeThreshold	Matches >= this size are guaranteed to be found
+     */
     public Fingerprint(String filepath, int ksize, int guaranteeThreshold){
         gramSize = ksize;
         guarantee = guaranteeThreshold;
@@ -33,15 +39,18 @@ public class Fingerprint{
     public int size() {
     	return fingerprint.size();
     }
-    public boolean hasHash(int hash){
+    public boolean hasHash(Hash hash){
         return fingerprint.contains(hash);
     }
     public String toString(){
     	return fingerprint.toString();
     }
+    /**
+     * Measures similarity between this and another fingerprint.
+     * @param other		Another fingerprint
+     * @return percentage of matches
+     */
     public double compare(Fingerprint other){
-        //add code here to compare two documents' fingerprints (HashSets)
-        //should return the percent of fingerprints that match
     	double pctMatch = 0;
     	for (Hash h : this.fingerprint)
     		if (other.fingerprint.contains(h))
@@ -50,6 +59,12 @@ public class Fingerprint{
         return pctMatch; 
     }
     
+    /**
+     * Parse the file into a list of words. Filters out garbage.
+     * Program exits if file or io exception.
+     * @param filepath
+     * @return words in document
+     */
     private static ArrayList<String> parseFile(String filepath){
     	ArrayList<String> parsedText = new ArrayList<String>();
         try {
@@ -74,17 +89,26 @@ public class Fingerprint{
         }
         return parsedText;
     }
+    /**
+     * Takes a list of words, representing the contents of the document (order
+     * retained), and generate a list of representative hashes.
+     * @param words
+     */
     private void makeHashes(ArrayList<String> words) {
+    	// ignore words shorter than threshold
     	int threshold = 3;
     	for (int i=words.size()-1; i>=0; i--) {
     		if (words.get(i).length() < threshold)
     			words.remove(i);
     	}
-    	for (int i=0; i < words.size() - gramSize + 1; i++) { 
-        	String kgram = "";   		
+    	// create hashes
+    	for (int i=0; i < words.size() - gramSize + 1; i++) {
+        	// create k-gram 
+        	String kgram = "";
     		for (int j=0; j<gramSize; j++) {
     			kgram += words.get(i+j);
     		}
+    		// hash k-gram by character, keeping hashes under 1 million
     		char[] chars = kgram.toLowerCase().toCharArray();
     		int hash = 0;
     		for (char c : chars) {
@@ -95,19 +119,24 @@ public class Fingerprint{
     		hashes.add(new Hash(hash, i));
     	}
     }
-    private void makeFingerprint(){ 
-        //clear the ArrayList to make a new set of prints
-        //add code here to create the document's fingerprint
-        //use winnowing method
+    /**
+     * Uses the winnowing technique to select all the distinct, least hashes
+     * within consecutive windows of size guarantee - gramSize + 1. This list
+     * of hashes constitutes the fingerprint of the document. 
+     */
+    private void makeFingerprint(){
     	int window = guarantee - gramSize + 1;
     	int minIndex = -1;
+    	// traverse through each window
     	for (int i=0; i < hashes.size() - window + 1; i++) {
+    		// if previous minimum is still in the window, only compare to new element
     		if (minIndex >= i) {
     			if (hashes.get(i+window-1).getHash() < hashes.get(minIndex).getHash()) {
     				minIndex = i+window-1;
     				fingerprint.add(hashes.get(i+window-1));
     			}
     		}
+    		// otherwise, traverse the window to find the least element
     		else {
     			Hash min = null;
 	    		for (int ind = 0; ind < window; ind++) {
@@ -123,6 +152,14 @@ public class Fingerprint{
     
 }
 
+/**
+ * Represents the hash of a document substring, along with the index of the
+ * substring within the larger document. The index of the hash is useful for
+ * locating hash matches (since it is difficult to recreate the substring
+ * from the hash).
+ * @author Dhruva
+ *
+ */
 class Hash{
 	private int hash;
 	private int index;
