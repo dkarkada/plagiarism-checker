@@ -108,14 +108,7 @@ public class Fingerprint{
     		for (int j=0; j<gramSize; j++) {
     			kgram += words.get(i+j);
     		}
-    		// hash k-gram by character, keeping hashes under 1 million
-    		char[] chars = kgram.toLowerCase().toCharArray();
-    		int hash = 0;
-    		for (char c : chars) {
-    			hash <<= 6;
-    			hash |= c - 96;
-    			hash %= 1000000;
-    		}
+    		int hash = kgram.hashCode();
     		hashes.add(new Hash(hash, i));
     	}
     }
